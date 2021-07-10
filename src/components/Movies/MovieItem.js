@@ -1,8 +1,8 @@
 import React from 'react';
 
-import classes from './Movie.module.css';
+import classes from './MovieItem.module.css';
 
-const Movie = (props) => {
+const MovieItem = (props) => {
   return (
     <li className={classes.movie}>
       <h2>{props.title}</h2>
@@ -12,4 +12,4 @@ const Movie = (props) => {
   );
 };
 
-export default Movie;
+export default MovieItem;

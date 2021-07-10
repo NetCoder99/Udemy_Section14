@@ -1,13 +1,14 @@
 export default async function FetchMovies(setMovies, setError) {
     console.log("FetchMovies.init");
     try {
-        const response = await fetch('https://swapi.dev/api/films/', {})
+        //const response = await fetch('https://swapi.dev/api/films/', {})
+        const response = await fetch('http://localhost:8081/getMovies', {})
         const data     = await response.json();
-
         if (!response.ok) {
-            throw new Error("Fetch failed in FetchMovies!");
+          console.log("FetchMovies.response:" + response.status);
+          console.log("FetchMovies.response:" + data.message);
+          throw new Error("Fetch failed in FetchMovies!" + data.message);
         }
-
         const transformedMovies = data.results.map(movieData => {
           return {
             id: movieData.episode_id,
@@ -17,7 +18,6 @@ export default async function FetchMovies(setMovies, setError) {
           }
         });
         setMovies(transformedMovies);
-    
     }
     catch(error) 
     { 

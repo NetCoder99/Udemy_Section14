@@ -1,8 +1,14 @@
 import React, {useState, useEffect }from 'react';
 
-import MoviesList from './components/MoviesList';
+//import { Switch, Route } from 'react-router-dom';
+//import Layout from './components/Layout/Layout';
+//import MainNavigation from './components/Layout/MainNavigation';
 
-import FetchMovies from './data/FetchMovies';
+import MoviesList   from './components/Movies/MoviesList';
+import AddMovie     from './components/Movies/AddMovie'
+
+import FetchMovies   from './data/FetchMovies';
+import PostNewMovie  from './data/PostNewMovie';
 //import MoviesStatic from './data/MoviesStatic';
 
 import './App.css';
@@ -10,20 +16,52 @@ import './App.css';
 function App() {
   //const dummyMovies = MoviesStatic();
   // ---------------------------------------------------------
-  const [movies, setMovies] = useState([]);
-  const [hasError, setError] = useState([]);
+  const [movies,    setMovies] = useState([]);
+  const [hasError,  setError] = useState();
+  const [message,   setMessage] = useState();
   const [isLoading, setIsLoading] = useState(false);
 
+  // ---------------------------------------------------------
+  function setMessageHandler(message) {
+    console.log("App.setMessageHandler.message:" + message);
+    setMessage(message);
+  }
+
+
+  // ---------------------------------------------------------
+  async function postMovieHandler(movie) {
+    console.log("App.postMovieHandler.init:" + movie);
+
+    const movieData = JSON.stringify({
+        title: movie.title,
+        openingText: movie.openingText,
+        releaseDate: movie.releaseDate
+    });
+
+    setIsLoading(true);
+    setError(null);
+
+    await PostNewMovie(movieData, setMessageHandler, setError)
+
+    if (hasError) {
+      console.log("App.PostNewMovie.error:" + hasError);
+    }
+    setIsLoading(false);
+
+    console.log("App.PostNewMovie.exit");
+  }
+
+  // ---------------------------------------------------------
   async function fetchMoviesHandler() {
-    console.log("fetchMoviesHandler.init");
+    console.log("App.fetchMoviesHandler.init");
     setIsLoading(true);
     setError(null);
     await FetchMovies(setMovies, setError);
     if (hasError) {
-      console.log("fetchMoviesHandler.error:" + hasError);
+      console.log("App.fetchMoviesHandler.error:" + hasError);
     }
     setIsLoading(false);
-    console.log("fetchMoviesHandler.exit");
+    console.log("App.fetchMoviesHandler.exit");
   };
 
   let content = <p>No movies to display!</p>;
@@ -39,6 +77,9 @@ function App() {
   // ---------------------------------------------------------
   return (
     <React.Fragment>
+      <section>
+        <AddMovie onAddMovie={postMovieHandler}></AddMovie>
+      </section>
       <section>
         <button onClick={fetchMoviesHandler}>Fetch Movies</button>
       </section>
